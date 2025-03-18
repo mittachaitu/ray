@@ -53,10 +53,10 @@ def main():
     _ = run_on_every_node(download_model)
 
     # print("Loading tiny_shakespeare dataset...")
-    # current_dataset = load_dataset("tiny_shakespeare")
+    current_dataset = load_dataset("tiny_shakespeare")
 
     # Use the C4 dataset
-    current_dataset = load_dataset("allenai/c4", "en", streaming=True)
+    # current_dataset = load_dataset("allenai/c4", "en", streaming=True)
 
     ray_datasets = {
         "train": ray.data.from_huggingface(current_dataset["train"]),
@@ -80,7 +80,7 @@ def main():
     # Steps per epoch
     train_ds_size = processed_datasets["train"].count()
     steps_per_epoch = train_ds_size // (batch_size * num_workers)
-    epochs = 1
+    epochs = 2
 
     # Pick a free port on the driver; all workers will use it
     master_port = get_free_port()
