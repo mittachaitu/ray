@@ -56,7 +56,7 @@ def main():
     # current_dataset = load_dataset("tiny_shakespeare")
 
     # Use the C4 dataset
-    current_dataset = load_dataset("allenai/c4", "en")
+    current_dataset = load_dataset("allenai/c4", "en", streaming=True)
 
     ray_datasets = {
         "train": ray.data.from_huggingface(current_dataset["train"]),
