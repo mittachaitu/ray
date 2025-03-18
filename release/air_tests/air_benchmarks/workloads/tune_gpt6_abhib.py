@@ -31,7 +31,7 @@ use_gpu = False
 num_workers = 10
 cpus_per_worker = 12
 block_size = 512
-model_name = "EleutherAI/gpt-neo-125M"
+model_name = "openai-community/gpt2-large"
 
 def main():
     print("Initializing Ray...")
