@@ -31,7 +31,7 @@ use_gpu = False
 num_workers = 10
 cpus_per_worker = 12
 block_size = 512
-model_name = "openai-community/gpt2-large"
+model_name = "EleutherAI/gpt-neo-125M"
 
 def main():
     print("Initializing Ray...")
@@ -52,8 +52,11 @@ def main():
     print("Ray initialized, downloading model on each node...")
     _ = run_on_every_node(download_model)
 
-    print("Loading tiny_shakespeare dataset...")
-    current_dataset = load_dataset("tiny_shakespeare")
+    # print("Loading tiny_shakespeare dataset...")
+    # current_dataset = load_dataset("tiny_shakespeare")
+
+    # Use the C4 dataset
+    current_dataset = load_dataset("allenai/c4", "en")
 
     ray_datasets = {
         "train": ray.data.from_huggingface(current_dataset["train"]),
