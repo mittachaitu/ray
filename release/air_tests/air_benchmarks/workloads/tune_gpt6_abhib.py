@@ -262,11 +262,11 @@ def train_func(config):
     max_steps = min(steps_per_epoch * epochs, 5)  # Adjust as needed for your trial
     
     training_args = TrainingArguments(
-        output_dir="output",
+        output_dir="/results",
         per_device_train_batch_size=batch_size,
         gradient_accumulation_steps=gradient_accumulation_steps,
         max_steps=max_steps,
-        save_strategy="steps",
+        save_strategy="epoch",
         save_steps=steps_per_epoch,
         logging_steps=1,
         fp16=use_gpu,
