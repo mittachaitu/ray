@@ -80,7 +80,7 @@ def main():
     # Steps per epoch
     train_ds_size = processed_datasets["train"].count()
     steps_per_epoch = train_ds_size // (batch_size * num_workers)
-    epochs = 2
+    epochs = 1
 
     # Pick a free port on the driver; all workers will use it
     master_port = get_free_port()
@@ -259,14 +259,14 @@ def train_func(config):
     disable_progress_bar()
 
     # Limit to 5 steps for quick test
-    max_steps = min(steps_per_epoch * epochs, 5)  # Adjust as needed for your trial
+    # max_steps = min(steps_per_epoch * epochs, 5)  # Adjust as needed for your trial
     
     training_args = TrainingArguments(
-        output_dir="/results",
+        output_dir="output",
         per_device_train_batch_size=batch_size,
         gradient_accumulation_steps=gradient_accumulation_steps,
-        max_steps=max_steps,
-        save_strategy="epoch",
+        max_steps=steps_per_epoch * epochs,
+        save_strategy="steps",
         save_steps=steps_per_epoch,
         logging_steps=1,
         fp16=use_gpu,
