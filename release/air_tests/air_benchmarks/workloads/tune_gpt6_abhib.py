@@ -87,7 +87,7 @@ def main():
     processed_datasets["validation"] = processed_datasets["validation"].limit(train_ds_size)
     print(f"Train dataset size: {train_ds_size}")
     steps_per_epoch = train_ds_size // (batch_size * num_workers)
-    epochs = 1
+    epochs = 2
 
     # Pick a free port on the driver; all workers will use it
     master_port = get_free_port()
