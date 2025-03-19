@@ -59,8 +59,8 @@ def main():
     # current_dataset = load_dataset("allenai/c4", "en", streaming=True)
 
     ray_datasets = {
-        "train": ray.data.from_huggingface(current_dataset["train"]),
-        "validation": ray.data.from_huggingface(current_dataset["validation"]),
+        "train": ray.data.from_huggingface(current_dataset["train"].select(range(128))),
+        "validation": ray.data.from_huggingface(current_dataset["validation"].select(range(128))),
     }
 
     print("Processing datasets...")
