@@ -92,7 +92,7 @@ def main():
     # Pick a free port on the driver; all workers will use it
     master_port = get_free_port()
 
-    print("Trainer Param epochs={epochs} batch_size={batch_size} steps_per_epoch={steps_per_epoch} use_gpu={use_gpu} gradient_accumulation_steps={gradient_accumulation_steps} master_port={master_port}");
+    # print("Trainer Param epochs={epochs} batch_size={batch_size} steps_per_epoch={steps_per_epoch} use_gpu={use_gpu} gradient_accumulation_steps={gradient_accumulation_steps} master_port={master_port}");
 
     trainer = TorchTrainer(
         train_loop_per_worker=train_func,
@@ -207,14 +207,14 @@ def train_func(config):
             world_size=world_size,
         )
 
-    print(f"[Worker {rank}/{world_size}] epochs={epochs} steps_per_epoch={steps_per_epoch} gradient_accumulation_steps={gradient_accumulation_steps} batch_size={batch_size} local_rank={local_rank}, backend={backend}, GPU={use_gpu}")
+    # print(f"[Worker {rank}/{world_size}] epochs={epochs} steps_per_epoch={steps_per_epoch} gradient_accumulation_steps={gradient_accumulation_steps} batch_size={batch_size} local_rank={local_rank}, backend={backend}, GPU={use_gpu}")
 
     # Enable TF32 if GPU
     if use_gpu:
         torch.backends.cuda.matmul.allow_tf32 = True
 
     # Total train batch size = micro_batch_size * gradient_accum_steps * world_size
-    train_batch_size = batch_size * gradient_accumulation_steps * world_size
+    # train_batch_size = batch_size * gradient_accumulation_steps * world_size
     import deepspeed
     deepspeed.init_distributed()
 
