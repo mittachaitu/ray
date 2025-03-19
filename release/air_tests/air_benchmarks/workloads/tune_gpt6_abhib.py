@@ -82,7 +82,7 @@ def main():
     # processed_datasets["validation"] = processed_datasets["validation"][:128]
 
     # Steps per epoch
-    train_ds_size = min(128, processed_datasets["train"].count())
+    train_ds_size = min(320, processed_datasets["train"].count())
     processed_datasets["train"] = processed_datasets["train"].limit(train_ds_size)
     processed_datasets["validation"] = processed_datasets["validation"].limit(train_ds_size)
     print(f"Train dataset size: {train_ds_size}")
