@@ -73,7 +73,7 @@ def main():
     }
 
     # Per-device micro-batch size
-    batch_size = 128
+    batch_size = 16
     # Example: single grad_accum step
     gradient_accumulation_steps = 1
 
@@ -229,10 +229,10 @@ def train_func(config):
                 "pin_memory": True,
             },
             "contiguous_gradients": True,
+            "gather_16bit_weights_on_model_save": True,
         },
         "gradient_accumulation_steps": "auto",
         "gradient_clipping": "auto",
-        "gather_16bit_weights_on_model_save": True,
         "train_batch_size": train_batch_size,
         "train_micro_batch_size_per_gpu": batch_size,
         "steps_per_print": 10,
@@ -260,7 +260,7 @@ def train_func(config):
     disable_progress_bar()
 
     # Limit to 5 steps for quick test
-    # max_steps = min(steps_per_epoch * epochs, 5)  # Adjust as needed for your trial
+    max_steps = min(steps_per_epoch * epochs, 5)  # Adjust as needed for your trial
     
     training_args = TrainingArguments(
         output_dir="output",
