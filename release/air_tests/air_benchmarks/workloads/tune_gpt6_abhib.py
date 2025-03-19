@@ -182,7 +182,7 @@ def train_func(config):
 
     # Basic hyperparams
     use_gpu = config["use_gpu"]
-    gradient_accumulation_steps = config["gradient_accumulation_steps"]
+    # gradient_accumulation_steps = config["gradient_accumulation_steps"]
     batch_size = config["batch_size"]
     epochs = config["epochs"]
     steps_per_epoch = config["steps_per_epoch"]
