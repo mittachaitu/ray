@@ -73,7 +73,7 @@ def main():
     }
 
     # Per-device micro-batch size
-    batch_size = 16
+    batch_size = 256
     # Example: single grad_accum step
     gradient_accumulation_steps = 1
 
@@ -232,6 +232,7 @@ def train_func(config):
         },
         "gradient_accumulation_steps": "auto",
         "gradient_clipping": "auto",
+        "gather_16bit_weights_on_model_save": True,
         "train_batch_size": train_batch_size,
         "train_micro_batch_size_per_gpu": batch_size,
         "steps_per_print": 10,
