@@ -261,7 +261,7 @@ def train_func(config):
             "round_robin_gradients": True,
         })
 
-    print(f"[Worker {rank}] Training Args Setup (world_size={world_size}, train_batch_size={train_batch_size})")
+    # print(f"[Worker {rank}] Training Args Setup (world_size={world_size}, train_batch_size={train_batch_size})")
 
     disable_progress_bar()
 
