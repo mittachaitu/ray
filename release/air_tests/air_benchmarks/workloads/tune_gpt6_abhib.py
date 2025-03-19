@@ -73,7 +73,7 @@ def main():
     }
 
     # Per-device micro-batch size
-    batch_size = 256
+    batch_size = 128
     # Example: single grad_accum step
     gradient_accumulation_steps = 1
 
