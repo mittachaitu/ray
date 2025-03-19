@@ -101,7 +101,6 @@ def main():
             "batch_size": batch_size,
             "steps_per_epoch": steps_per_epoch,
             "use_gpu": use_gpu,
-            "gradient_accumulation_steps": gradient_accumulation_steps,
             "master_port": master_port,   # <--- pass the chosen port
         },
         scaling_config=ScalingConfig(
@@ -240,8 +239,8 @@ def train_func(config):
         },
         "gradient_accumulation_steps": "auto",
         "gradient_clipping": "auto",
-        "train_batch_size": train_batch_size,
-        "train_micro_batch_size_per_gpu": batch_size,
+        "train_batch_size": "auto",
+        "train_micro_batch_size_per_gpu": "auto",
         "steps_per_print": 10,
         "wall_clock_breakdown": False,
     }
@@ -273,7 +272,7 @@ def train_func(config):
     training_args = TrainingArguments(
         output_dir="output",
         per_device_train_batch_size=batch_size,
-        gradient_accumulation_steps=gradient_accumulation_steps,
+        gradient_accumulation_steps=1,
         max_steps=steps_per_epoch * epochs,
         save_strategy="steps",
         save_steps=steps_per_epoch,
