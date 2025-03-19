@@ -260,7 +260,8 @@ def train_func(config):
     disable_progress_bar()
 
     # Limit to 5 steps for quick test
-    max_steps = min(steps_per_epoch * epochs, 5)  # Adjust as needed for your trial
+    steps_per_epoch = 5
+    # max_steps = min(steps_per_epoch * epochs, 5)  # Adjust as needed for your trial
     
     training_args = TrainingArguments(
         output_dir="output",
