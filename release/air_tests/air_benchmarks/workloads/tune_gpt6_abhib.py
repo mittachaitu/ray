@@ -78,8 +78,8 @@ def main():
     gradient_accumulation_steps = 1
 
     # Limit to 128 samples for quick test
-    processed_datasets["train"] = processed_datasets["train"].select(range(128))
-    processed_datasets["validation"] = processed_datasets["validation"].select(range(128))
+    # processed_datasets["train"] = processed_datasets["train"][:128]
+    # processed_datasets["validation"] = processed_datasets["validation"][:128]
 
     # Steps per epoch
     train_ds_size = processed_datasets["train"].count()
