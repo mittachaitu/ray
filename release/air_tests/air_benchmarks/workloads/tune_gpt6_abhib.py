@@ -59,8 +59,8 @@ def main():
     # current_dataset = load_dataset("allenai/c4", "en", streaming=True)
 
     ray_datasets = {
-        "train": ray.data.from_huggingface(current_dataset["train"].select(range(128))),
-        "validation": ray.data.from_huggingface(current_dataset["validation"].select(range(128))),
+        "train": ray.data.from_huggingface(current_dataset["train"]),
+        "validation": ray.data.from_huggingface(current_dataset["validation"]),
     }
 
     print("Processing datasets...")
@@ -77,8 +77,13 @@ def main():
     # Example: single grad_accum step
     gradient_accumulation_steps = 1
 
+    # Limit to 128 samples for quick test
+    processed_datasets["train"] = processed_datasets["train"].select(range(128))
+    processed_datasets["validation"] = processed_datasets["validation"].select(range(128))
+
     # Steps per epoch
     train_ds_size = processed_datasets["train"].count()
+    print(f"Train dataset size: {train_ds_size}")
     steps_per_epoch = train_ds_size // (batch_size * num_workers)
     epochs = 1
 
