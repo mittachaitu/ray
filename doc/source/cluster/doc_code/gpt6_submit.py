@@ -6,7 +6,7 @@ kick_off_gpt_tuning = (
     # Clone ray. If ray is already present, don't clone again.
     "git clone -b nearora/ray_abs https://github.com/nearora-msft/ray || true;"
     # Run the benchmark.
-    " python ray/release/air_tests/air_benchmarks/workloads/tune_gpt6.py"
+    " python ray/release/air_tests/air_benchmarks/workloads/tune_gpt6_abhib.py"
 )
 
 submission_id = client.submit_job(
