@@ -45,6 +45,7 @@ def main():
                 "transformers==4.29.2",
                 "torch>=1.12.0",
                 "deepspeed==0.16.4",
+                "ray[train]==2.7.0",
             ],
         },
     )
