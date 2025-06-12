@@ -28,7 +28,7 @@ import ray.train as train
 use_gpu = False
 
 # Example cluster config
-num_workers = 10
+num_workers = 4
 cpus_per_worker = 12
 block_size = 512
 model_name = "openai-community/gpt2-large"
