@@ -4,16 +4,21 @@ import os
 import pandas as pd
 import time
 from typing import Dict
+import pyarrow
 
 import xgboost as xgb
 import lightgbm as lgb
 
 import ray
 from ray import data
-from ray.train.lightgbm.v2 import LightGBMTrainer
-from ray.train.xgboost.v2 import XGBoostTrainer
-from ray.train.xgboost import RayTrainReportCallback as XGBoostReportCallback
-from ray.train.lightgbm import RayTrainReportCallback as LightGBMReportCallback
+from ray.train.lightgbm import (
+    LightGBMTrainer,
+    RayTrainReportCallback as LightGBMReportCallback,
+)
+from ray.train.xgboost import (
+    RayTrainReportCallback as XGBoostReportCallback,
+    XGBoostTrainer,
+)
 from ray.train import RunConfig, ScalingConfig
 
 _TRAINING_TIME_THRESHOLD = 600
@@ -29,9 +34,9 @@ _EXPERIMENT_PARAMS = {
         "cpus_per_worker": 1,
     },
     "10G": {
-        "data": "s3://air-example-data-2/10G-xgboost-data.parquet/",
-        "num_workers": 1,
-        "cpus_per_worker": 12,
+        "data": "az://testcontainer1/10G-data/",
+        "num_workers": 3,
+        "cpus_per_worker": 6,
     },
     "100G": {
         "data": "s3://air-example-data-2/100G-xgboost-data.parquet/",
@@ -136,23 +141,27 @@ _FRAMEWORK_PARAMS = {
 def train(
     framework: str, data_path: str, num_workers: int, cpus_per_worker: int
 ) -> ray.train.Result:
-    ds = data.read_parquet(data_path)
+    fs = pyarrow.fs.AzureFileSystem("mittasblobforray2")
+    ds = data.read_parquet(data_path, filesystem=fs)
     framework_params = _FRAMEWORK_PARAMS[framework]
 
     trainer_cls = framework_params["trainer_cls"]
     framework_train_loop_fn = framework_params["train_loop_function"]
 
+    # train_loop_config=framework_params["train_loop_config"],
+    # train_loop_per_worker=framework_train_loop_fn,
     trainer = trainer_cls(
-        train_loop_per_worker=framework_train_loop_fn,
-        train_loop_config=framework_params["train_loop_config"],
         scaling_config=ScalingConfig(
             num_workers=num_workers,
             resources_per_worker={"CPU": cpus_per_worker},
         ),
         datasets={"train": ds},
         run_config=RunConfig(
-            storage_path="/mnt/cluster_storage", name=f"{framework}_benchmark"
+            storage_path="testcontainer1/cluster_storage", name=f"{framework}_benchmark",
+            storage_filesystem=fs
         ),
+        params=framework_params["train_loop_config"]["params"],
+        label_column=framework_params["train_loop_config"]["label_column"],
     )
     result = trainer.fit()
     return result
@@ -162,12 +171,13 @@ def predict(framework: str, result: ray.train.Result, data_path: str):
     framework_params = _FRAMEWORK_PARAMS[framework]
 
     predictor_cls = framework_params["predictor_cls"]
+    fs = pyarrow.fs.AzureFileSystem("mittasblobforray2")
 
-    ds = data.read_parquet(data_path)
+    ds = data.read_parquet(data_path, filesystem=fs)
     ds = ds.drop_columns(["labels"])
 
     concurrency = int(ray.cluster_resources()["CPU"] // 2)
-    result = ds.map_batches(
+    ds.map_batches(
         predictor_cls,
         # Improve prediction throughput with larger batch size than default 4096
         batch_size=8192,
@@ -179,10 +189,7 @@ def predict(framework: str, result: ray.train.Result, data_path: str):
             "result": result,
         },
         batch_format="pandas",
-    )
-
-    for _ in result.iter_batches():
-        pass
+    ).write_parquet("testcontainer1/cluster_storage/predictions", filesystem=fs)
 
 
 def main(args):
@@ -235,7 +242,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "framework", type=str, choices=["xgboost", "lightgbm"], default="xgboost"
     )
-    parser.add_argument("--size", type=str, choices=["10G", "100G"], default="100G")
+    parser.add_argument("--size", type=str, choices=["10G", "100G"], default="10G")
     # Add a flag for disabling the timeout error.
     # Use case: running the benchmark as a documented example, in infra settings
     # different from the formal benchmark's EC2 setup.
